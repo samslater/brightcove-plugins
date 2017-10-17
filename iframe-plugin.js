@@ -15,7 +15,7 @@
             id: mId,
             data: data
         }
-        console.log('message', message);
+
         window.parent.postMessage(JSON.stringify(message), '*');
     }
 
@@ -52,10 +52,12 @@
         'end'
     ];
 
-    var eventsList = [];
-
     if (typeof videojs !== 'undefined') {
         videojs.registerPlugin('iframeEventBroadcaster', function() {
+            if (window.top === self) {
+                console.info('iframeEventBroadcaster not started, same window');
+                return;
+            }
             var player = this;
             for (var i = 0; i < events.length; i++) {
                 var eventName = events[i];
@@ -63,12 +65,16 @@
                 player.on(eventName, (function(name) {
                     return function(e) {
                         // console.log(e, arguments);
+                        var className = e.el().className;
                         sendMessage(name, {
                             mediainfo: this.mediainfo,
                             currentSrc: this.currentSrc(),
                             currentTime: this.currentTime(),
                             duration: this.duration(),
                             muted: this.muted(),
+                            el: {
+                                className: className
+                            },
                             volume: this.volume(),
                             width: this.width(),
                             height: this.height(),
