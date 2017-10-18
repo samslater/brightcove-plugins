@@ -1,3 +1,5 @@
+/* global document,window  */
+
 (function() {
 
     var mId = 0;
@@ -14,30 +16,41 @@
             name: name,
             id: mId,
             data: data
-        }
+        };
 
         window.parent.postMessage(JSON.stringify(message), '*');
     }
 
     var events = [
-        'progress', // Buffering (loading) video data
-        'waiting', // 	Waiting momentarily for requested video data
-        'stalled', // 	Buffering stalled
-        'error', // 	Error occurred while loading video
-        'playing', // Playback resumed following pause or download delay
-        'ratechange', // Playback rate has changed (could be manual or automatic)
-        'loadstart', // Dispatched when the player is initialized, and if it’s re-initialized in the case of giving it a new source to play
-        'loadedmetadata', //  Dispatched when the player has initial duration and dimension information, in other words, when the first segment is downloaded. For live videos the loadedmetadata event won't be dispatched until the user clicks play. This is because live videos don't start downloading segments until the user clicks play.
+        'progress',
+        // Buffering (loading) video data
+        'waiting',
+        // 	Waiting momentarily for requested video data
+        'stalled',
+        // 	Buffering stalled
+        'error',
+        // 	Error occurred while loading video
+        'playing',
+        // Playback resumed following pause or download delay
+        'ratechange',
+        // Playback rate has changed (could be manual or automatic)
+        'loadstart',
+        // Dispatched when the player is initialized, and if it’s re-initialized in the case of giving it a new source to play
+        'loadedmetadata',
+        //  Dispatched when the player has initial duration and dimension information, in other words, when the first segment is downloaded. For live videos the loadedmetadata event won't be dispatched until the user clicks play. This is because live videos don't start downloading segments until the user clicks play.
         'play',
         'pause',
-        'ready', // method has a dual personality in that it seems like an event, but you use it like a method. This method/event means the player is ready to receive commands.
+        'ready',
+        // method has a dual personality in that it seems like an event, but you use it like a method. This method/event means the player is ready to receive commands.
         'ended',
-        'loadeddata',  //  Dispatched when the player has downloaded data at the current playback position
+        'loadeddata',
+        //  Dispatched when the player has downloaded data at the current playback position
         'timeupdate',
         'useractive',
         'userinactive',
         'bc-catalog-error',
-        'fullscreenchange ',  // event is emitted by the player when it is toggled to or from fullscreen mode.
+        'fullscreenchange ',
+        // event is emitted by the player when it is toggled to or from fullscreen mode.
         'volumechange',
         'video_load',
         'percent_played',
@@ -61,11 +74,9 @@
             var player = this;
             for (var i = 0; i < events.length; i++) {
                 var eventName = events[i];
-                console.log('eventName', eventName);
                 player.on(eventName, (function(name) {
-                    return function(e) {
-                        // console.log(e, arguments);
-                        var className = e.el().className;
+                    return function() {
+                        var className = this.el().className || '';
                         sendMessage(name, {
                             mediainfo: this.mediainfo,
                             currentSrc: this.currentSrc(),
